@@ -257,7 +257,7 @@ def anatomic_correctness_page():
                     st.error(f"Failed to reset: {e}")
 
         if st.button("🏠 Back to Home"):
-            st.switch_page("main.py")
+            st.switch_page("Main.py")
 
 
 if __name__ == "__main__":
