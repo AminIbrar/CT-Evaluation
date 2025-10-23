@@ -207,8 +207,8 @@ def classification_page():
                 except Exception as e:
                     st.error(f"Failed to reset: {e}")
     
-    if st.button("🏠 Back to Home"):
-        st.switch_page("main.py")
+        if st.button("🏠 Back to Home"):
+            st.switch_page("Main.py")
 
 
 if __name__ == "__main__":
