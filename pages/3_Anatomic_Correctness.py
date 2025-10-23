@@ -8,7 +8,7 @@ from utils import *  # uses: setup_page_layout, init_supabase, load_data, find_f
 # - Make sure your Supabase table "anatomic_correctness" has a UNIQUE constraint on (case_id).
 #   Example in SQL editor:
 #   ALTER TABLE anatomic_correctness ALTER COLUMN case_id TYPE text; -- if needed
-#   ALTER TABLE anatomic_correctness ADD CONSTRAINT anatomic_correctness_case_id_key UNIQUE (case_id);
+#   ALTER TABLE anatomic_correctness ADD CONSTRAINT anatomic_correctness_case_id_key UNIQUE (case_id)
 
 
 def anatomic_correctness_page():
@@ -50,7 +50,7 @@ def anatomic_correctness_page():
                 st.warning(f"Could not load data from Supabase: {e}")
                 st.info("Check SUPABASE_URL and SUPABASE_KEY in utils.py")
 
-            # Jump to first unassessed
+            # Jump to first unassessed (for when user returns to app)
             first_uncl = find_first_unclassified_index(st.session_state.df, "Assessment")
             st.session_state.current_index = 0 if first_uncl is None else first_uncl
             st.session_state.data_loaded = True
@@ -91,9 +91,6 @@ def anatomic_correctness_page():
         st.markdown("---")
 
         # Current image section
-        #st.subheader(f"Image {current_index + 1} of {len(df)}")
-        #st.write(f"**Case ID:** {case_id}")
-
         if current_assessment:
             st.info(f"🔄 **Current assessment:** **{current_assessment}**")
         else:
@@ -110,7 +107,6 @@ def anatomic_correctness_page():
                 st.image(image, caption=f"Case: {case_id}", width=300)
 
         with col2:
-            #st.subheader("Anatomic Correctness")
             st.subheader(f"Image {current_index + 1} of {len(df)}")
 
             # Assessment options
@@ -161,28 +157,43 @@ def anatomic_correctness_page():
                     st.rerun()
 
             with col_btn3:
-                button_label = "Update" if current_assessment else "Save"
-                if st.button(f"{button_label} →", type="primary", key=f"save_{case_id}"):
+                # Determine button label and behavior
+                is_last_image = current_index == len(df) - 1
+
+                if is_last_image:
+                    button_label = "Restart" if current_assessment else "Save & Restart"
+                    button_type = "secondary"
+                else:
+                    button_label = "Update & Next" if current_assessment else "Save & Next"
+                    button_type = "primary"
+
+                if st.button(button_label, type=button_type, key=f"save_{case_id}"):
                     try:
                         case_id_norm = str(case_id).strip()
                         assessment_norm = str(assessment_choice).strip()
                         comment_norm = str(comment_choice).strip()
 
+                        # Save to Supabase
                         supabase.table("anatomic_correctness").upsert({
                             "case_id": case_id_norm,
                             "assessment": assessment_norm,
                             "comment": comment_norm
                         }).execute()
 
+                        # Update local session state
                         st.session_state.df.at[current_index, "Assessment"] = assessment_norm
                         st.session_state.df.at[current_index, "Comment"] = comment_norm
 
-                        if not current_assessment:
-                            nxt = find_first_unclassified_index(st.session_state.df, "Assessment")
-                            if nxt is not None:
-                                st.session_state.current_index = nxt
+                        # Handle navigation after save
+                        if is_last_image:
+                            # Restart from beginning
+                            st.session_state.current_index = 0
+                            st.success(f"Assessment saved: {assessment_norm}. Restarting from first image.")
+                        else:
+                            # Move to next image (not first unassessed)
+                            st.session_state.current_index = current_index + 1
+                            st.success(f"Assessment saved: {assessment_norm}. Moving to next image.")
 
-                        st.success(f"Assessment saved: {assessment_norm}")
                         st.rerun()
                     except Exception as e:
                         st.error(f"Failed to save to database: {e}")

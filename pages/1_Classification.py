@@ -3,11 +3,12 @@ import streamlit as st
 import pandas as pd
 from utils import *  # uses: setup_page_layout, init_supabase, load_data, find_first_unclassified_index, find_case_index, load_and_display_image
 
+
 # IMPORTANT:
 # - Make sure your Supabase table "classifications" has a UNIQUE constraint on (case_id).
 #   Example in SQL editor:
 #   ALTER TABLE classifications ALTER COLUMN case_id TYPE text; -- if needed
-#   ALTER TABLE classifications ADD CONSTRAINT classifications_case_id_key UNIQUE (case_id);
+#   ALTER TABLE classifications ADD CONSTRAINT classifications_case_id_key UNIQUE (case_id)
 
 
 def classification_page():
@@ -39,7 +40,7 @@ def classification_page():
                 st.warning(f"Could not load data from Supabase: {e}")
                 st.info("Check SUPABASE_URL and SUPABASE_KEY in utils.py")
 
-            # Jump to first unclassified
+            # Jump to first unclassified (for when user returns to app)
             first_uncl = find_first_unclassified_index(st.session_state.df, "Classification")
             st.session_state.current_index = 0 if first_uncl is None else first_uncl
             st.session_state.data_loaded = True
@@ -77,9 +78,6 @@ def classification_page():
         st.markdown("---")
 
         # Current image section
-        #st.subheader(f"Image {current_index + 1} of {len(df)}")
-
-
         if current_result:
             st.info(f"🔄 **Currently classified as:** **{current_result}**")
         else:
@@ -123,25 +121,40 @@ def classification_page():
                     st.rerun()
 
             with col_btn3:
-                button_label = "Update" if current_result else "Save"
-                if st.button(f"{button_label} →", type="primary", key=f"save_{case_id}"):
+                # Determine button label and behavior
+                is_last_image = current_index == len(df) - 1
+
+                if is_last_image:
+                    button_label = "Restart" if current_result else "Save & Restart"
+                    button_type = "secondary"
+                else:
+                    button_label = "Update & Next" if current_result else "Save & Next"
+                    button_type = "primary"
+
+                if st.button(button_label, type=button_type, key=f"save_{case_id}"):
                     try:
                         case_id_norm = str(case_id).strip()
                         class_norm = str(classification_choice).strip()
 
+                        # Save to Supabase
                         supabase.table("classifications").upsert({
                             "case_id": case_id_norm,
                             "classification": class_norm
                         }).execute()
 
+                        # Update local session state
                         st.session_state.df.at[current_index, "Classification"] = class_norm
 
-                        if not current_result:
-                            nxt = find_first_unclassified_index(st.session_state.df, "Classification")
-                            if nxt is not None:
-                                st.session_state.current_index = nxt
+                        # Handle navigation after save
+                        if is_last_image:
+                            # Restart from beginning
+                            st.session_state.current_index = 0
+                            st.success(f"Classification saved as: {class_norm}. Restarting from first image.")
+                        else:
+                            # Move to next image (not first unclassified)
+                            st.session_state.current_index = current_index + 1
+                            st.success(f"Classification saved as: {class_norm}. Moving to next image.")
 
-                        st.success(f"Classification saved as: {class_norm}")
                         st.rerun()
                     except Exception as e:
                         st.error(f"Failed to save to database: {e}")
@@ -164,7 +177,8 @@ def classification_page():
 
                 st.write("### Quick Navigation")
                 nav_cols = st.columns(4)
-                for idx, (cid, result) in enumerate(zip(display_df["CaseID"], display_df["Classification"])):  # type: ignore
+                for idx, (cid, result) in enumerate(
+                        zip(display_df["CaseID"], display_df["Classification"])):  # type: ignore
                     col_idx = idx % 4
                     cid_str = str(cid)
                     result_str = str(result) if pd.notna(result) and result != "" else "Unclassified"
