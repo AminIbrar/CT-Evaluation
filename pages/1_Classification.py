@@ -193,22 +193,22 @@ def classification_page():
         st.info("No data available. Please check the CSV file.")
 
     # Sidebar controls
-with st.sidebar:
-    st.header("Controls")
-    if st.button("🔄 Reset All Labels", type="secondary"):
-        if st.session_state.df is not None:
-            try:
-                supabase.table("classifications").delete().gte("case_id", "").execute()
-                st.session_state.df["Classification"] = ""
-                st.session_state.current_index = 0
-                st.session_state.show_celebration = False
-                st.success("All labels reset!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Failed to reset: {e}")
-
-    if st.button("🏠 Back to Home"):
-        st.switch_page("main.py")
+    with st.sidebar:
+        st.header("Controls")
+        if st.button("🔄 Reset All Labels", type="secondary"):
+            if st.session_state.df is not None:
+                try:
+                    supabase.table("classifications").delete().gte("case_id", "").execute()
+                    st.session_state.df["Classification"] = ""
+                    st.session_state.current_index = 0
+                    st.session_state.show_celebration = False
+                    st.success("All labels reset!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Failed to reset: {e}")
+    
+        if st.button("🏠 Back to Home"):
+            st.switch_page("main.py")
 
 
 if __name__ == "__main__":
