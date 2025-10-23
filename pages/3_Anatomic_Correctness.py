@@ -138,7 +138,7 @@ def anatomic_correctness_page():
             comment_choice = st.text_area(
                 "Additional Comments (optional):",
                 value=current_comment,
-                height=100,
+                height=120,
                 key=f"comment_{case_id}",
                 placeholder="Specify anatomical inaccuracies (e.g., organ shape/size/position, missing structures, abnormal morphology)..."
             )
