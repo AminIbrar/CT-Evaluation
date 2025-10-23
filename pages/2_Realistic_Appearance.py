@@ -138,7 +138,7 @@ def realistic_appearance_page():
             comment_choice = st.text_area(
                 "Additional Comments (optional):",
                 value=current_comment,
-                height=100,
+                height=120,
                 key=f"comment_{case_id}",
                 placeholder="Describe any unrealistic features affecting image quality (e.g., artifacts, noise, blurring, texture anomalies ...)"
             )
