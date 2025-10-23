@@ -140,7 +140,7 @@ def realistic_appearance_page():
                 value=current_comment,
                 height=100,
                 key=f"comment_{case_id}",
-                placeholder="Add any additional observations about image realism..."
+                placeholder="Describe any unrealistic features affecting image quality (e.g., artifacts, noise, blurring, texture anomalies ...)"
             )
 
             # Navigation buttons
