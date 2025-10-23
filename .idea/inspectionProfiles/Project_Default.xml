@@ -1,0 +1,83 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="ignoredPackages">
+        <list>
+          <option value="langchain" />
+          <option value="langchain-core" />
+          <option value="langchain-openai" />
+          <option value="openai" />
+          <option value="langchain-anthropic" />
+          <option value="langchain-google-genai" />
+          <option value="google-generativeai" />
+          <option value="langchain-huggingface" />
+          <option value="transformers" />
+          <option value="huggingface-hub" />
+          <option value="python-dotenv" />
+          <option value="numpy" />
+          <option value="scikit-learn" />
+          <option value="altair" />
+          <option value="anthropic" />
+          <option value="async-timeout" />
+          <option value="attrs" />
+          <option value="blinker" />
+          <option value="cachetools" />
+          <option value="click" />
+          <option value="dnspython" />
+          <option value="email-validator" />
+          <option value="exceptiongroup" />
+          <option value="filelock" />
+          <option value="filetype" />
+          <option value="fsspec" />
+          <option value="gitdb" />
+          <option value="GitPython" />
+          <option value="google-ai-generativelanguage" />
+          <option value="google-api-core" />
+          <option value="google-api-python-client" />
+          <option value="google-auth" />
+          <option value="google-auth-httplib2" />
+          <option value="googleapis-common-protos" />
+          <option value="greenlet" />
+          <option value="grpcio" />
+          <option value="grpcio-status" />
+          <option value="httplib2" />
+          <option value="Jinja2" />
+          <option value="joblib" />
+          <option value="jsonschema" />
+          <option value="jsonschema-specifications" />
+          <option value="langchain-text-splitters" />
+          <option value="MarkupSafe" />
+          <option value="narwhals" />
+          <option value="pandas" />
+          <option value="pillow" />
+          <option value="proto-plus" />
+          <option value="protobuf" />
+          <option value="pyarrow" />
+          <option value="pyasn1" />
+          <option value="pyasn1_modules" />
+          <option value="pydeck" />
+          <option value="pyparsing" />
+          <option value="python-dateutil" />
+          <option value="pytz" />
+          <option value="referencing" />
+          <option value="rpds-py" />
+          <option value="rsa" />
+          <option value="safetensors" />
+          <option value="scipy" />
+          <option value="six" />
+          <option value="smmap" />
+          <option value="SQLAlchemy" />
+          <option value="streamlit" />
+          <option value="threadpoolctl" />
+          <option value="tokenizers" />
+          <option value="toml" />
+          <option value="tornado" />
+          <option value="tzdata" />
+          <option value="uritemplate" />
+          <option value="watchdog" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

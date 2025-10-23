@@ -1,7 +1,7 @@
 import streamlit as st
-# 🏠 Home
+
 st.set_page_config(
-    page_title="CT Image Evaluation",
+    page_title="Medical Image Evaluation",
     page_icon="🏥",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -40,7 +40,7 @@ def main():
     """, unsafe_allow_html=True)
 
     # Header
-    st.markdown('<div class="main-header">🏥 CT Image Evaluation Platform</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🏥 Medical Image Evaluation Platform</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Comprehensive assessment of CT image quality and authenticity</div>',
                 unsafe_allow_html=True)
 

@@ -2,6 +2,24 @@ import streamlit as st
 import pandas as pd
 import os
 from PIL import Image
+from supabase import create_client, Client
+import streamlit as st
+
+
+# Initialize Supabase client
+@st.cache_resource
+def init_supabase():
+    # For local development - we'll use secrets for deployment
+    try:
+        # Try to get from secrets (for Streamlit Cloud)
+        url = st.secrets["SUPABASE_URL"]
+        key = st.secrets["SUPABASE_KEY"]
+    except:
+        # For local development - you'll replace these with your actual credentials
+        url = "https://raajetcwgsyeesrdooap.supabase.co"
+        key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhYWpldGN3Z3N5ZWVzcmRvb2FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMjYzNjYsImV4cCI6MjA3NjgwMjM2Nn0.THWFJT8slo1r3bVz6TtXTbg1zESbiv1_-YzxaK4Gt0M"
+
+    return create_client(url, key)
 
 
 # Initialize session state
@@ -22,7 +40,7 @@ def init_session_state():
         st.session_state.current_result_column = ""
 
 
-# Load CSV data
+# Load CSV data (for initial image list only)
 def load_data(csv_path=""):
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
@@ -46,9 +64,14 @@ def find_case_index(df, case_id):
     return 0
 
 
-def load_and_display_image(image_path, size=(256, 256)):
+def load_and_display_image(image_path, subfolder="", size=(256, 256)):
     try:
-        full_image_path = os.path.join("images", image_path)
+        # Build the full image path with optional subfolder
+        if subfolder:
+            full_image_path = os.path.join("images", subfolder, image_path)
+        else:
+            full_image_path = os.path.join("images", image_path)
+
         if os.path.exists(full_image_path):
             image = Image.open(full_image_path)
             image_resized = image.resize(size)
