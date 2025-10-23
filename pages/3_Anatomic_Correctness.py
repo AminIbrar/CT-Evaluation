@@ -140,7 +140,7 @@ def anatomic_correctness_page():
                 value=current_comment,
                 height=100,
                 key=f"comment_{case_id}",
-                placeholder="Add any additional observations about anatomical structure..."
+                placeholder="Specify anatomical inaccuracies (e.g., organ shape/size/position, missing structures, abnormal morphology)..."
             )
 
             # Navigation buttons
