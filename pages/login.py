@@ -2,6 +2,8 @@
 import streamlit as st
 from utils import init_supabase
 
+
+
 def login_page():
     st.set_page_config(
         page_title="Medical Image Evaluation - Login",
@@ -59,6 +61,7 @@ def login_page():
     """, unsafe_allow_html=True)
 
     supabase = init_supabase()
+
 
     # Header
     st.markdown('<div class="login-header"><h1>🏥 Medical Image Evaluation</h1><h3>Please Login</h3></div>',

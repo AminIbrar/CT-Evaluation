@@ -6,8 +6,6 @@ from PIL import Image
 from supabase import create_client
 
 
-
-
 # Initialize Supabase client
 @st.cache_resource
 def init_supabase():
@@ -108,7 +106,7 @@ def setup_page_layout(title, description, csv_path="", result_column=""):
     st.set_page_config(
         page_title=title,
         layout="wide",
-        initial_sidebar_state="expanded"  # Show sidebar for modules
+        initial_sidebar_state="collapsed"  # Show sidebar for modules
     )
     st.title(title)
     st.write(description)
@@ -124,15 +122,15 @@ def setup_page_layout(title, description, csv_path="", result_column=""):
         st.session_state.current_result_column = result_column
 
     # Add sidebar logout button for module pages
-    with st.sidebar:
-        st.header("Session")
-        st.write(f"User: **{st.session_state.get('reader_name', 'Unknown')}**")
-
-        if st.button("🏠 Back to Home", use_container_width=True):
-            st.switch_page("pages/Reader_Dashboard.py")
-
-        if st.button("🚪 Logout", use_container_width=True):
-            # Clear all session state
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
+    # with st.sidebar:
+    #     st.header("Session")
+    #     st.write(f"User: **{st.session_state.get('reader_name', 'Unknown')}**")
+    #
+    #     if st.button("🏠 Back to Home", use_container_width=True):
+    #         st.switch_page("pages/Reader_Dashboard.py")
+    #
+    #     if st.button("🚪 Logout", use_container_width=True):
+    #         # Clear all session state
+    #         for key in list(st.session_state.keys()):
+    #             del st.session_state[key]
+    #         st.rerun()
