@@ -156,3 +156,4 @@ if st.session_state.get('authenticated', False):
         st.switch_page("pages/Reader_Dashboard.py")
 else:
     login_page()
+
