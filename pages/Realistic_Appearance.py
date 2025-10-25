@@ -102,7 +102,8 @@ def realistic_appearance_page():
                 ).execute()
                 existing = {str(item["case_id"]): {
                     "assessment": item["assessment"],
-                    "comment": item.get("comment", "")
+                    "comment": item.get("comment", ""),
+                    "image_path": item.get("image_path", "")
                 } for item in response.data or []}
 
                 # Merge with CSV data
@@ -247,13 +248,15 @@ def realistic_appearance_page():
                         case_id_norm = str(case_id).strip()
                         assessment_norm = str(assessment_choice).strip()
                         comment_norm = str(comment_choice).strip()
+                        image_path_norm = str(image_path).strip()
 
-                        # Save to Supabase with reader_id
+                        # Save to Supabase with reader_id and ImagePath
                         supabase.table("realistic_appearance").upsert({
                             "case_id": case_id_norm,
                             "reader_id": st.session_state.reader_id,
                             "assessment": assessment_norm,
-                            "comment": comment_norm
+                            "comment": comment_norm,
+                            "image_path": image_path_norm  # Store ImagePath in database
                         }).execute()
 
                         st.session_state.df.at[current_index, "Assessment"] = assessment_norm
@@ -344,7 +347,8 @@ def realistic_appearance_page():
                 ).execute()
                 current_map = {str(item["case_id"]): {
                     "assessment": item["assessment"],
-                    "comment": item.get("comment", "")
+                    "comment": item.get("comment", ""),
+                    "image_path": item.get("image_path", "")
                 } for item in response.data or []}
 
                 # Create display dataframe with assessment data
@@ -381,4 +385,3 @@ def realistic_appearance_page():
 
 if __name__ == "__main__":
     realistic_appearance_page()
-

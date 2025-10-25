@@ -69,11 +69,15 @@ def classification_page():
                 response = supabase.table("classifications").select("*").eq(
                     "reader_id", st.session_state.reader_id
                 ).execute()
-                existing = {str(item["case_id"]): item["classification"] for item in response.data or []}
+                existing = {str(item["case_id"]): {
+                    "classification": item["classification"],
+                    "image_path": item.get("image_path", "")
+                } for item in response.data or []}
+
                 for idx, row in st.session_state.df.iterrows():
                     cid = str(row["CaseID"])
                     if cid in existing:
-                        st.session_state.df.at[idx, "Classification"] = existing[cid]
+                        st.session_state.df.at[idx, "Classification"] = existing[cid]["classification"]
             except Exception as e:
                 st.warning(f"Could not load data from Supabase: {e}")
                 st.info("Make sure the classifications table has been updated for multi-reader support")
@@ -170,7 +174,8 @@ def classification_page():
                     st.session_state.current_index = current_index - 1
                     st.rerun()
             with bcol2:
-                if current_index < len(df) - 1 and st.button("Skip →", use_container_width=False, key=f"skip_{case_id}"):
+                if current_index < len(df) - 1 and st.button("Skip →", use_container_width=False,
+                                                             key=f"skip_{case_id}"):
                     st.session_state.current_index = current_index + 1
                     st.rerun()
             with bcol3:
@@ -180,11 +185,16 @@ def classification_page():
                     try:
                         case_id_norm = str(case_id).strip()
                         class_norm = str(classification_choice).strip()
+                        image_path_norm = str(image_path).strip()
+
+                        # Save to Supabase with ImagePath
                         supabase.table("classifications").upsert({
                             "case_id": case_id_norm,
                             "reader_id": st.session_state.reader_id,
-                            "classification": class_norm
+                            "classification": class_norm,
+                            "image_path": image_path_norm  # Store ImagePath in database
                         }).execute()
+
                         st.session_state.df.at[current_index, "Classification"] = class_norm
 
                         if is_last_image:
@@ -202,7 +212,8 @@ def classification_page():
                 st.warning("Would you like to move to next task (Realistic Appearance)?")
                 c1, c2 = st.columns(2, gap="small")
                 with c1:
-                    if st.button("✅ Yes, go to Realistic Appearance Task", use_container_width=True, key="confirm_yes_next_task"):
+                    if st.button("✅ Yes, go to Realistic Appearance Task", use_container_width=True,
+                                 key="confirm_yes_next_task"):
                         st.session_state["next_task_confirm"] = False
                         st.switch_page("pages/Realistic_Appearance.py")
                 with c2:
@@ -267,19 +278,23 @@ def classification_page():
                 response = supabase.table("classifications").select("*").eq(
                     "reader_id", st.session_state.reader_id
                 ).execute()
-                current_map = {str(item["case_id"]): item["classification"] for item in response.data or []}
+                current_map = {str(item["case_id"]): {
+                    "classification": item["classification"],
+                    "image_path": item.get("image_path", "")
+                } for item in response.data or []}
 
                 display_df = fresh_df.copy()
                 for idx, r in display_df.iterrows():
                     cid = str(r["CaseID"])
                     if cid in current_map:
-                        display_df.at[idx, "Classification"] = current_map[cid]
+                        display_df.at[idx, "Classification"] = current_map[cid]["classification"]
 
                 st.dataframe(display_df[["CaseID", "ImagePath", "Classification"]])
 
                 st.write("### Quick Navigation")
                 nav_cols = st.columns(4)
-                for idx, (cid, result) in enumerate(zip(display_df["CaseID"], display_df["Classification"])):  # type: ignore
+                for idx, (cid, result) in enumerate(
+                        zip(display_df["CaseID"], display_df["Classification"])):  # type: ignore
                     col_idx = idx % 4
                     cid_str = str(cid)
                     result_str = str(result) if pd.notna(result) and result != "" else "Unclassified"

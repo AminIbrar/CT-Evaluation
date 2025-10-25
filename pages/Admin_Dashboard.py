@@ -218,7 +218,7 @@ def display_classification_data(supabase):
             df['created_at'] = pd.to_datetime(df['created_at']).dt.strftime('%Y-%m-%d %H:%M:%S')
 
         # Show statistics
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3= st.columns(3)
         with col1:
             st.metric("Total Records", len(df))
         with col2:
@@ -227,9 +227,9 @@ def display_classification_data(supabase):
         with col3:
             unique_readers = df['reader_id'].nunique() if 'reader_id' in df.columns else 0
             st.metric("Unique Readers", unique_readers)
-        with col4:
-            real_count = len(df[df['classification'] == 'Real']) if 'classification' in df.columns else 0
-            st.metric("Real Classifications", real_count)
+        # with col4:
+        #     real_count = len(df[df['classification'] == 'Real']) if 'classification' in df.columns else 0
+        #     st.metric("Real Classifications", real_count)
 
         st.markdown("---")
 
