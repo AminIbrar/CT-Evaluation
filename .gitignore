@@ -1,3 +1,4 @@
+.streamlit/secrets.toml
 data/
 appdev/
 __pycache__/

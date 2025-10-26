@@ -8,17 +8,24 @@ from supabase import create_client
 
 # Initialize Supabase client
 @st.cache_resource
+@st.cache_resource
 def init_supabase():
     try:
-        # Try to get from secrets (for Streamlit Cloud)
         url = st.secrets["SUPABASE_URL"]
         key = st.secrets["SUPABASE_KEY"]
-    except:
-        # For local development - replace with your actual credentials
-        url = "https://raajetcwgsyeesrdooap.supabase.co"
-        key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhYWpldGN3Z3N5ZWVzcmRvb2FwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMjYzNjYsImV4cCI6MjA3NjgwMjM2Nn0.THWFJT8slo1r3bVz6TtXTbg1zESbiv1_-YzxaK4Gt0M"
+    except (KeyError, FileNotFoundError) as e:
+        st.error(f"❌ Missing Supabase credentials in secrets: {e}")
+        return None
+    except Exception as e:
+        st.error(f"❌ Error accessing secrets: {e}")
+        return None
 
-    return create_client(url, key)
+    try:
+        return create_client(url, key)
+    except Exception as e:
+        st.error(f"❌ Failed to initialize Supabase client: {e}")
+        return None
+
 
 
 # Initialize module-specific session state
